@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnackTray - Petiscos Personalizados</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#f59e0b">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3050/3050230.png">
+
+    <!-- CSS e Fontes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .tray-grid { 
+            display: grid; 
+            gap: 12px; 
+            aspect-ratio: 1/1; 
+            background: #e2e8f0; 
+            padding: 15px; 
+            border-radius: 50%; 
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .division { 
+            background: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            border: 2px solid transparent; 
+            position: relative; 
+            transition: 0.2s; 
+        }
+        .division.filled { border-color: #f59e0b; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        input, select, textarea { border: 1px solid #e2e8f0 !important; outline: none !important; border-radius: 0.75rem !important; }
+        input:focus { border-color: #f59e0b !important; background: #fffbeb; }
+        .snack-img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans select-none">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-sm p-4 sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-black text-amber-600 tracking-tighter">
+                <i class="fas fa-bowl-food mr-2"></i>SNACKTRAY
+            </h1>
+            <button onclick="toggleAdmin()" class="bg-slate-100 px-4 py-1.5 rounded-full text-xs font-bold text-slate-500 uppercase tracking-widest">
+                Painel ADM
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4 pb-24">
+        
+        <!-- PASSO 1: SELEÇÃO DE BANDEJA -->
+        <section id="step-1" class="space-y-4">
+            <h2 class="text-lg font-bold text-center text-slate-700">Escolha o tamanho da sua bandeja:</h2>
+            <div id="tray-options-container" class="space-y-3">
+                <!-- Carregado via Firebase -->
+                <p class="text-center text-slate-400 py-10">Carregando cardápio...</p>
+            </div>
+        </section>
+
+        <!-- PASSO 2: MONTAGEM DA BANDEJA -->
+        <section id="step-2" class="hidden text-center">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="showSection('step-1')" class="text-slate-400 text-sm font-bold"><i class="fas fa-arrow-left mr-1"></i> Voltar</button>
+                <span id="tray-label" class="bg-amber-500 text-white px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"></span>
+            </div>
+            
+            <div id="tray-visual" class="tray-grid mb-8 mx-auto w-full max-w-[320px]"></div>
+            
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 flex justify-between items-center">
+                <span class="text-slate-400 font-bold">Total Parcial:</span>
+                <span id="total-price" class="text-2xl font-black text-green-600">R$ 0,00</span>
+            </div>
+            
+            <button onclick="goToCheckout()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold shadow-xl active:scale-95 transition-all">
+                CONTINUAR PARA ENTREGA
+            </button>
+        </section>
+
+        <!-- PASSO 3: CHECKOUT -->
+        <section id="step-3" class="hidden space-y-4">
+            <h2 class="text-xl font-bold text-slate-700">Finalizar Pedido 📍</h2>
+            <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4 border border-slate-100">
+                <input type="text" id="cust-name" placeholder="Seu Nome Completo" class="w-full p-4 bg-slate-50">
+                <input type="tel" id="cust-phone" placeholder="Seu WhatsApp" class="w-full p-4 bg-slate-50">
+                
+                <div class="flex justify-between items-center pt-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Endereço de Entrega</span>
+                    <button onclick="getClientLocation()" class="text-xs bg-amber-500 text-white px-3 py-2 rounded-lg font-bold shadow-md">
+                        <i class="fas fa-location-crosshairs mr-1"></i> USAR GPS
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2">
+                    <input type="text" id="end-rua" placeholder="Rua / Av." class="col-span-3 p-4 bg-slate-50">
+                    <input type="text" id="end-num" placeholder="Nº" class="col-span-1 p-4 bg-slate-50">
+                </div>
+                <input type="text" id="end-bairro" placeholder="Bairro" class="w-full p-4 bg-slate-50">
+
+                <div id="delivery-info" class="hidden bg-amber-50 p-4 rounded-2xl border border-amber-100 flex justify-between items-center">
+                    <div class="text-amber-700 font-bold text-sm">
+                        <i class="fas fa-truck mr-1"></i> Entrega (<span id="dist-display">0</span>km)
+                    </div>
+                    <div class="text-amber-900 font-black text-lg">R$ <span id="taxa-val">0.00</span></div>
+                </div>
+
+                <select id="cust-payment" class="w-full p-4 font-bold bg-slate-100 appearance-none">
+                    <option value="Pix">Pagar com Pix</option>
+                    <option value="Cartão na Entrega">Cartão na Entrega</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                </select>
+
+                <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black shadow-lg flex justify-center items-center gap-3 text-lg">
+                    ENVIAR PELO WHATSAPP <i class="fab fa-whatsapp text-2xl"></i>
+                </button>
+                <button onclick="showSection('step-2')" class="w-full text-slate-400 text-xs font-bold">Ajustar Bandeja</button>
+            </div>
+        </section>
+
+        <!-- PAINEL ADMINISTRATIVO -->
+        <section id="admin-area" class="hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-black">Painel ADM</h2>
+                <button onclick="showSection('step-1')" class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl font-bold text-xs">SAIR</button>
+            </div>
+
+            <!-- BANDEJAS -->
+            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4 shadow-sm">
+                <h3 class="font-black text-amber-600 text-xs uppercase tracking-widest">1. Gerenciar Bandejas</h3>
+                <div id="admin-tray-list" class="space-y-2"></div>
+                <div class="pt-4 border-t space-y-2">
+                    <input type="text" id="new-tray-label" placeholder="Nome (Ex: Super Festa)" class="w-full p-3 bg-white">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="new-tray-size" placeholder="Divisões" class="p-3 bg-white">
+                        <input type="number" id="new-tray-price" placeholder="Preço R$" class="p-3 bg-white">
+                    </div>
+                    <button onclick="addTray()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">+ Adicionar Bandeja</button>
+                </div>
+            </div>
+
+            <!-- PETISCOS -->
+            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4 shadow-sm">
+                <h3 class="font-black text-amber-600 text-xs uppercase tracking-widest">2. Gerenciar Petiscos</h3>
+                <div id="admin-snack-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                <div class="pt-4 border-t space-y-2">
+                    <input type="text" id="new-snack-name" placeholder="Nome do Petisco" class="w-full p-3 bg-white">
+                    <input type="text" id="new-snack-img" placeholder="URL da Foto Real (Opcional)" class="w-full p-3 bg-white">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="new-snack-emoji" placeholder="Emoji (🥜)" class="p-3 bg-white text-center text-2xl">
+                        <input type="number" id="new-snack-price" placeholder="Preço Extra R$" class="p-3 bg-white">
+                    </div>
+                    <button onclick="addSnack()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">+ Adicionar Petisco</button>
+                </div>
+            </div>
+
+            <!-- CONFIGURAÇÕES -->
+            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4 shadow-sm">
+                <h3 class="font-black text-amber-600 text-xs uppercase tracking-widest">3. Loja e Entrega</h3>
+                <button onclick="fixStoreLocation()" class="w-full bg-amber-500 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 shadow-md">
+                    <i class="fas fa-location-dot"></i> FIXAR MINHA LOJA AQUI
+                </button>
+                <p id="store-status" class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Localização não definida</p>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] font-black ml-1 uppercase">WhatsApp do Pedido (55...)</label>
+                        <input type="text" id="adm-wa" class="w-full p-3 bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] font-black ml-1 uppercase">R$ por KM</label>
+                            <input type="number" id="adm-per-km" step="0.10" class="w-full p-3 bg-white">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black ml-1 uppercase">Taxa Mínima R$</label>
+                            <input type="number" id="adm-min-tax" step="0.10" class="w-full p-3 bg-white">
+                        </div>
+                    </div>
+                </div>
+                <button onclick="saveAdminConfigs()" class="w-full bg-green-600 text-white py-4 rounded-xl font-black shadow-lg">SALVAR TUDO</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL DE SELEÇÃO DE PETISCOS -->
+    <div id="snack-modal" class="fixed inset-0 bg-black/80 hidden z-[60] backdrop-blur-sm flex items-end justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-t-[40px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-black text-xl text-slate-800">Selecione o Item</h3>
+                <button onclick="document.getElementById('snack-modal').classList.add('hidden')" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-xl">&times;</button>
+            </div>
+            <div id="snack-list" class="grid grid-cols-2 gap-4 pb-10"></div>
+        </div>
+    </div>
+
+    <!-- LOGICA FIREBASE E SISTEMA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlp5p7c3xpc42cRa1un_-zd3HNwqnGuQU",
+            authDomain: "petisco-a5880.firebaseapp.com",
+            projectId: "petisco-a5880",
+            storageBucket: "petisco-a5880.firebasestorage.app",
+            messagingSenderId: "211799950005",
+            appId: "1:211799950005:web:836bb02c084bc906bdf4fc",
+            measurementId: "G-BSCWSDE7TB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- ESTADO ---
+        let trayTypes = [];
+        let snacks = [];
+        let config = {};
+        let selectedTray = null;
+        let currentTrayConfig = [];
+        let deliveryFee = 0;
+        let clientCoords = null;
+
+        // --- SINCRONIZAÇÃO EM TEMPO REAL ---
+
+        // Bandejas
+        onValue(ref(db, 'trays'), (snapshot) => {
+            const data = snapshot.val();
+            trayTypes = data ? Object.keys(data).map(key => ({id: key, ...data[key]})) : [];
+            renderClientTrays();
+            renderAdminTrays();
+        });
+
+        // Petiscos
+        onValue(ref(db, 'snacks'), (snapshot) => {
+            const data = snapshot.val();
+            snacks = data ? Object.keys(data).map(key => ({id: key, ...data[key]})) : [];
+            renderAdminSnacks();
+        });
+
+        // Configurações
+        onValue(ref(db, 'config'), (snapshot) => {
+            config = snapshot.val() || { whatsapp: '', perKm: 3, minTax: 7, lat: null, lng: null };
+            document.getElementById('store-status').innerText = config.lat ? "✅ LOJA FIXADA NO GPS" : "❌ LOCALIZAÇÃO DA LOJA NÃO DEFINIDA";
+            document.getElementById('adm-wa').value = config.whatsapp || '';
+            document.getElementById('adm-per-km').value = config.perKm || 3;
+            document.getElementById('adm-min-tax').value = config.minTax || 7;
+        });
+
+        // --- FUNÇÕES ADMINISTRATIVAS ---
+
+        window.addTray = () => {
+            const label = document.getElementById('new-tray-label').value;
+            const size = parseInt(document.getElementById('new-tray-size').value);
+            const price = parseFloat(document.getElementById('new-tray-price').value);
+            if(label && size && price) {
+                push(ref(db, 'trays'), { label, size, price });
+                document.getElementById('new-tray-label').value = '';
+                document.getElementById('new-tray-size').value = '';
+                document.getElementById('new-tray-price').value = '';
+            }
+        };
+
+        window.deleteTray = (id) => { if(confirm("Remover bandeja?")) remove(ref(db, `trays/${id}`)); };
+
+        window.addSnack = () => {
+            const name = document.getElementById('new-snack-name').value;
+            const emoji = document.getElementById('new-snack-emoji').value || '🍿';
+            const price = parseFloat(document.getElementById('new-snack-price').value) || 0;
+            const img = document.getElementById('new-snack-img').value;
+            if(name) {
+                push(ref(db, 'snacks'), { name, emoji, price, image: img });
+                document.getElementById('new-snack-name').value = '';
+                document.getElementById('new-snack-img').value = '';
+                document.getElementById('new-snack-emoji').value = '';
+                document.getElementById('new-snack-price').value = '';
+            }
+        };
+
+        window.deleteSnack = (id) => { if(confirm("Remover petisco?")) remove(ref(db, `snacks/${id}`)); };
+
+        window.saveAdminConfigs = () => {
+            update(ref(db, 'config'), {
+                whatsapp: document.getElementById('adm-wa').value,
+                perKm: parseFloat(document.getElementById('adm-per-km').value),
+                minTax: parseFloat(document.getElementById('adm-min-tax').value)
+            });
+            alert("✅ Configurações salvas na nuvem!");
+        };
+
+        window.fixStoreLocation = () => {
+            navigator.geolocation.getCurrentPosition(pos => {
+                update(ref(db, 'config'), { lat: pos.coords.latitude, lng: pos.coords.longitude });
+                alert("📍 Ponto da loja fixado com sucesso!");
+            }, () => alert("Erro ao acessar GPS."));
+        };
+
+        // --- LÓGICA DO CLIENTE ---
+
+        window.selectTray = (id) => {
+            selectedTray = trayTypes.find(t => t.id === id);
+            currentTrayConfig = Array(selectedTray.size).fill(null);
+            showSection('step-2');
+            document.getElementById('tray-label').innerText = `BANDEJA ${selectedTray.label}`;
+            renderTrayVisual();
+            updateTotal();
+        };
+
+        function renderTrayVisual() {
+            const container = document.getElementById('tray-visual');
+            container.innerHTML = '';
+            const cols = selectedTray.size <= 4 ? 2 : (selectedTray.size <= 6 ? 2 : 3);
+            container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            
+            currentTrayConfig.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `division ${item ? 'filled' : 'border-dashed border-slate-300'}`;
+                div.onclick = () => openSnackModal(index);
+                if (item) {
+                    div.innerHTML = item.image ? `<img src="${item.image}" class="snack-img">` : `<span class="text-4xl">${item.emoji}</span>`;
+                } else {
+                    div.innerHTML = `<span class="text-slate-300 text-2xl font-black">+</span>`;
+                }
+                container.appendChild(div);
+            });
+        }
+
+        window.openSnackModal = (index) => {
+            window.activeDivisionIndex = index;
+            const list = document.getElementById('snack-list');
+            list.innerHTML = snacks.map(s => `
+                <button onclick="confirmSnack('${s.id}')" class="flex flex-col items-center p-4 border rounded-3xl bg-slate-50 shadow-sm active:scale-95 transition-transform">
+                    <div class="w-16 h-16 flex items-center justify-center bg-white rounded-full mb-2 overflow-hidden border border-slate-200">
+                        ${s.image ? `<img src="${s.image}" class="w-full h-full object-cover">` : `<span class="text-3xl">${s.emoji}</span>`}
+                    </div>
+                    <span class="text-[10px] font-black uppercase text-slate-700 text-center leading-tight">${s.name}</span>
+                    <span class="text-xs font-bold text-green-600 mt-1">+R$ ${s.price.toFixed(2)}</span>
+                </button>
+            `).join('');
+            document.getElementById('snack-modal').classList.remove('hidden');
+        };
+
+        window.confirmSnack = (snackId) => {
+            currentTrayConfig[window.activeDivisionIndex] = snacks.find(s => s.id === snackId);
+            document.getElementById('snack-modal').classList.add('hidden');
+            renderTrayVisual();
+            updateTotal();
+        };
+
+        function updateTotal() {
+            const snacksPrice = currentTrayConfig.reduce((acc, curr) => acc + (curr ? curr.price : 0), 0);
+            const total = (selectedTray?.price || 0) + snacksPrice + deliveryFee;
+            document.getElementById('total-price').innerText = `R$ ${total.toFixed(2)}`;
+            return total;
+        }
+
+        window.getClientLocation = () => {
+            if(!config.lat) return alert("O estabelecimento ainda não fixou a localização no ADM.");
+            navigator.geolocation.getCurrentPosition(pos => {
+                clientCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                
+                // Cálculo de distância Haversine
+                const R = 6371;
+                const dLat = (clientCoords.lat - config.lat) * Math.PI / 180;
+                const dLon = (clientCoords.lng - config.lng) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+                          Math.cos(config.lat * Math.PI / 180) * Math.cos(clientCoords.lat * Math.PI / 180) * 
+                          Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const dist = (R * c) * 1.35; // Fator de correção de trajeto urbano
+
+                deliveryFee = Math.max(config.minTax, dist * config.perKm);
+                document.getElementById('delivery-info').classList.remove('hidden');
+                document.getElementById('dist-display').innerText = dist.toFixed(1);
+                document.getElementById('taxa-val').innerText = deliveryFee.toFixed(2);
+                updateTotal();
+                alert("GPS Ativado! Taxa calculada.");
+            }, () => alert("Erro ao obter GPS. Verifique as permissões do navegador."));
+        };
+
+        // --- UI E RENDERIZADORES ---
+
+        function renderClientTrays() {
+            const container = document.getElementById('tray-options-container');
+            if(trayTypes.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-10">Nenhuma bandeja cadastrada no ADM.</p>`;
+                return;
+            }
+            container.innerHTML = trayTypes.map(t => `
+                <button onclick="selectTray('${t.id}')" class="w-full bg-white p-5 rounded-2xl flex justify-between items-center shadow-sm border-2 border-transparent active:border-amber-500 transition-all">
+                    <div class="text-left">
+                        <span class="block font-black text-slate-700 text-lg">${t.label}</span>
+                        <span class="text-xs text-slate-400 uppercase font-bold">${t.size} Divisões</span>
+                    </div>
+                    <span class="text-amber-600 font-black text-xl">R$ ${t.price.toFixed(2)}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderAdminTrays() {
+            document.getElementById('admin-tray-list').innerHTML = trayTypes.map(t => `
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                    <span class="text-sm font-bold">${t.label} - R$ ${t.price}</span>
+                    <button onclick="deleteTray('${t.id}')" class="text-red-500 bg-red-50 w-8 h-8 rounded-lg font-bold">×</button>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminSnacks() {
+            document.getElementById('admin-snack-list').innerHTML = snacks.map(s => `
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">${s.emoji}</span>
+                        <span class="text-xs font-bold uppercase text-slate-600">${s.name}</span>
+                    </div>
+                    <button onclick="deleteSnack('${s.id}')" class="text-red-500 bg-red-50 w-8 h-8 rounded-lg font-bold">×</button>
+                </div>
+            `).join('');
+        }
+
+        window.showSection = (id) => {
+            ['step-1', 'step-2', 'step-3', 'admin-area'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            window.scrollTo(0,0);
+        };
+
+        window.toggleAdmin = () => {
+            const isHidden = document.getElementById('admin-area').classList.contains('hidden');
+            if(isHidden) {
+                if(prompt("Senha Administrativa:") === "1234") {
+                    showSection('admin-area');
+                }
+            } else {
+                showSection('step-1');
+            }
+        };
+
+        window.goToCheckout = () => {
+            if(currentTrayConfig.includes(null)) return alert("Preencha todos os espaços da bandeja!");
+            showSection('step-3');
+        };
+
+        window.sendWhatsApp = () => {
+            const name = document.getElementById('cust-name').value;
+            const rua = document.getElementById('end-rua').value;
+            const num = document.getElementById('end-num').value;
+            const bairro = document.getElementById('end-bairro').value;
+            const payment = document.getElementById('cust-payment').value;
+
+            if(!name || !rua || !num) return alert("Nome, Rua e Número são obrigatórios!");
+
+            let snackTxt = currentTrayConfig.map((s, i) => `▫️ Espaço ${i+1}: *${s.name}*`).join('\n');
+            let gpsLink = clientCoords ? `https://www.google.com/maps?q=${clientCoords.lat},${clientCoords.lng}` : 'Não enviado';
+
+            const msg = `*NOVO PEDIDO - SNACKTRAY* 🧺\n\n` +
+                        `👤 *Cliente:* ${name}\n` +
+                        `📍 *Endereço:* ${rua}, ${num}\n` +
+                        `🏘️ *Bairro:* ${bairro}\n` +
+                        `🌎 *GPS:* ${gpsLink}\n\n` +
+                        `🍿 *Bandeja:* ${selectedTray.label}\n` +
+                        `${snackTxt}\n\n` +
+                        `🚚 *Taxa Entrega:* R$ ${deliveryFee.toFixed(2)}\n` +
+                        `💰 *TOTAL DO PEDIDO:* R$ ${updateTotal().toFixed(2)}\n` +
+                        `💳 *FORMA DE PAGAMENTO:* ${payment}`;
+
+            window.open(`https://wa.me/${config.whatsapp}?text=${encodeURIComponent(msg)}`);
+        };
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => console.log('PWA Offline mode ready'));
+            });
+        }
+    </script>
+</body>
+</html>

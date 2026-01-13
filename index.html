@@ -3,121 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnackTray - Acrílico Crystal Pro</title>
+    <title>PETISCO PRIME - Delivery de Petiscos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background: #f8fafc; font-family: 'Inter', sans-serif; }
-
-        /* BANDEJA ACRÍLICO DINÂMICA */
         .tray-base {
-            position: relative;
-            width: 340px;
-            height: 340px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            margin: 20px auto;
-            border: 6px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255,255,255,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            position: relative; width: 320px; height: 320px;
+            background: rgba(255, 255, 255, 0.4); border-radius: 50%;
+            margin: 20px auto; border: 6px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-
-        /* COMPARTIMENTO CENTRAL */
         .slot-center {
-            position: absolute;
-            width: 110px;
-            height: 110px;
-            background: #fff;
-            border-radius: 50%;
-            z-index: 100;
-            border: 4px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            overflow: hidden;
+            position: absolute; width: 100px; height: 100px;
+            background: #fff; border-radius: 50%; z-index: 100;
+            border: 4px solid rgba(255, 255, 255, 1); box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden;
         }
-
-        /* COMPARTIMENTOS LATERAIS DINÂMICOS */
         .slot-wedge {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #eee;
-            transition: 0.3s;
-            transform-origin: center;
+            position: absolute; width: 100%; height: 100%; z-index: 10;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            background: #eee; transform-origin: center;
         }
-
-        /* IMAGEM QUE PREENCHE A FATIA */
-        .snack-full-img {
-            width: 160%; 
-            height: 160%;
-            object-fit: cover;
-            position: absolute;
-            left: 20%;
-            transition: transform 0.5s ease;
-        }
-
-        .plus-icon { color: #fff; font-size: 32px; text-shadow: 0 2px 5px rgba(0,0,0,0.3); font-weight: bold; z-index: 90; }
+        .snack-full-img { width: 160%; height: 160%; object-fit: cover; position: absolute; left: 20%; }
+        .plus-icon { color: #fff; font-size: 24px; text-shadow: 0 2px 5px rgba(0,0,0,0.3); font-weight: bold; z-index: 90; }
         .hidden { display: none; }
-        
-        /* INPUTS ESTILIZADOS */
         .input-field { @apply w-full p-4 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-amber-500 transition-all; }
+        
+        /* Estilo para o título secreto */
+        #site-logo { cursor: default; user-select: none; }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <header class="p-4 bg-white/80 backdrop-blur-md sticky top-0 z-[200] border-b flex justify-between items-center">
-        <h1 class="font-black italic text-xl tracking-tighter">SNACKTRAY</h1>
-        <button onclick="toggleAdmin()" class="bg-slate-900 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest">Painel ADM</button>
+    <header class="p-4 bg-white/80 backdrop-blur-md sticky top-0 z-[200] border-b flex justify-center items-center">
+        <!-- O segredo está aqui: clique 3 vezes no h1 para abrir o ADM -->
+        <h1 id="site-logo" onclick="secretAdminAccess()" class="font-black italic text-2xl tracking-tighter text-amber-600">
+            PETISCO<span class="text-slate-900 ml-1">PRIME</span>
+        </h1>
     </header>
 
     <main class="max-w-md mx-auto p-4 pb-32">
         
-        <!-- PASSO 1: ESCOLHA DA BANDEJA -->
+        <!-- PASSO 1: CARDÁPIO -->
         <section id="step-1">
-            <h2 class="text-center font-bold text-slate-400 text-[10px] uppercase tracking-[0.4em] my-10">Selecione o Tamanho</h2>
+            <h2 class="text-center font-bold text-slate-400 text-[10px] uppercase tracking-[0.4em] my-10 italic">Escolha sua Experiência</h2>
             <div id="tray-list-client" class="space-y-4"></div>
         </section>
 
-        <!-- PASSO 2: MONTAGEM DINÂMICA -->
+        <!-- PASSO 2: MONTAGEM / REVISÃO -->
         <section id="step-2" class="hidden">
-            <div class="flex justify-between items-center mb-6">
-                <button onclick="showSection('step-1')" class="text-slate-400 text-xs font-bold uppercase"><i class="fas fa-arrow-left"></i> Voltar</button>
+            <div class="flex justify-between items-center mb-6 px-2">
+                <button onclick="showSection('step-1')" class="text-slate-400 text-xs font-bold uppercase"><i class="fas fa-arrow-left"></i> Cardápio</button>
                 <span id="tray-label-ui" class="text-[10px] font-black uppercase text-slate-600 bg-slate-100 px-3 py-1 rounded-full"></span>
             </div>
             
-            <div id="tray-visual" class="tray-base">
-                <!-- O JavaScript vai gerar o centro e as fatias aqui dentro -->
-            </div>
+            <div id="tray-visual" class="tray-base"></div>
+
+            <div id="preset-description" class="hidden mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-xs text-amber-800 italic text-center"></div>
 
             <div class="mt-10 bg-white p-8 rounded-[40px] shadow-2xl border border-slate-50 text-center">
-                <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Subtotal da Bandeja</p>
+                <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Subtotal</p>
                 <h3 id="subtotal-price" class="text-4xl font-black text-slate-900 mb-8 tracking-tighter">R$ 0,00</h3>
-                <button onclick="goToCheckout()" class="w-full bg-slate-900 text-white py-6 rounded-3xl font-bold shadow-xl active:scale-95 transition-all text-xs tracking-widest uppercase tracking-widest">Avançar para Entrega</button>
+                <button onclick="goToCheckout()" class="w-full bg-slate-900 text-white py-6 rounded-3xl font-bold shadow-xl active:scale-95 transition-all text-xs tracking-widest uppercase">Avançar para Entrega</button>
             </div>
         </section>
 
-        <!-- PASSO 3: CHECKOUT COM ENDEREÇO SEPARADO E TOTAL -->
+        <!-- PASSO 3: CHECKOUT -->
         <section id="step-3" class="hidden space-y-4">
             <h2 class="font-black text-2xl tracking-tighter px-2">Finalizar Pedido 📍</h2>
             <div class="bg-white p-6 rounded-[40px] shadow-xl space-y-4 border border-slate-50">
-                <input type="text" id="cust-name" placeholder="Seu Nome" class="input-field">
+                <input type="text" id="cust-name" placeholder="Nome Completo" class="input-field">
                 
                 <div class="space-y-2">
-                    <div class="flex justify-between items-center px-1">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Endereço</span>
-                        <button onclick="getClientLocation()" class="text-[10px] font-bold text-amber-600 uppercase italic">Usar GPS</button>
-                    </div>
                     <div class="grid grid-cols-4 gap-2">
                         <input type="text" id="end-rua" placeholder="Rua / Av." class="col-span-3 input-field">
                         <input type="text" id="end-num" placeholder="Nº" class="col-span-1 input-field">
@@ -125,20 +84,15 @@
                     <input type="text" id="end-bairro" placeholder="Bairro" class="input-field">
                 </div>
 
-                <!-- RESUMO DE VALORES -->
-                <div class="bg-slate-50 p-5 rounded-3xl space-y-2 border border-slate-100">
-                    <div class="flex justify-between text-xs font-bold text-slate-500">
-                        <span>Subtotal:</span>
-                        <span id="resumo-subtotal">R$ 0,00</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-bold text-slate-500">
-                        <span>Taxa de Entrega:</span>
-                        <span id="resumo-taxa">R$ 0,00</span>
-                    </div>
-                    <div class="flex justify-between text-lg font-black text-slate-900 pt-2 border-t border-slate-200">
-                        <span>TOTAL:</span>
-                        <span id="resumo-total">R$ 0,00</span>
-                    </div>
+                <!-- CÁLCULO DE FRETE OBRIGATÓRIO -->
+                <button id="btn-gps" onclick="getClientLocation()" class="w-full bg-amber-500 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2">
+                    <i class="fas fa-map-marker-alt"></i> ATIVAR GPS PARA CALCULAR FRETE
+                </button>
+
+                <div id="resumo-financeiro" class="hidden bg-slate-50 p-5 rounded-3xl space-y-2 border border-slate-100">
+                    <div class="flex justify-between text-xs font-bold text-slate-500 uppercase"><span>Itens:</span><span id="resumo-subtotal">R$ 0,00</span></div>
+                    <div class="flex justify-between text-xs font-bold text-slate-500 uppercase"><span>Entrega:</span><span id="resumo-taxa">R$ 0,00</span></div>
+                    <div class="flex justify-between text-xl font-black text-slate-900 pt-2 border-t border-slate-200"><span>TOTAL:</span><span id="resumo-total">R$ 0,00</span></div>
                 </div>
 
                 <select id="cust-payment" class="input-field font-bold text-slate-600">
@@ -146,51 +100,72 @@
                     <option value="Cartão">Cartão na Entrega</option>
                     <option value="Dinheiro">Dinheiro</option>
                 </select>
-                <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-6 rounded-3xl font-black text-sm shadow-xl uppercase">Enviar Pedido no WhatsApp <i class="fab fa-whatsapp ml-1"></i></button>
+
+                <button id="btn-finalizar" onclick="sendWhatsApp()" class="w-full bg-slate-300 text-white py-6 rounded-3xl font-black text-sm uppercase cursor-not-allowed" disabled>
+                    Cálculo de frete obrigatório
+                </button>
             </div>
         </section>
 
-        <!-- PAINEL ADM -->
+        <!-- PAINEL ADM (ESCONDIDO) -->
         <section id="admin-area" class="hidden space-y-8">
             <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4">
-                <h3 class="font-black text-[10px] uppercase text-amber-600">Bandejas</h3>
+                <div class="flex justify-between items-center">
+                    <h3 class="font-black text-[10px] uppercase text-amber-600 tracking-widest">Gerenciar Bandejas</h3>
+                    <button onclick="showSection('step-1')" class="text-[10px] font-bold text-slate-400">FECHAR ADM</button>
+                </div>
                 <div id="admin-tray-list" class="space-y-2"></div>
+                
                 <div class="pt-4 border-t space-y-2">
-                    <input type="text" id="new-tray-label" placeholder="Nome" class="w-full p-3 bg-slate-50 rounded-xl">
+                    <input type="text" id="new-tray-label" placeholder="Nome (Ex: Mix Tradicional)" class="w-full p-3 bg-slate-50 rounded-xl">
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="new-tray-size" placeholder="Total Furos">
+                        <input type="number" id="new-tray-size" placeholder="Furos (5)">
                         <input type="number" id="new-tray-price" placeholder="R$ Preço">
                     </div>
-                    <button onclick="addTray()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Adicionar</button>
+                    
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-100">
+                        <span class="text-[10px] font-bold text-amber-700 block mb-2 uppercase">Tipo da Bandeja:</span>
+                        <div class="flex gap-2">
+                            <button onclick="setTrayType('personalizada')" id="btn-type-pers" class="flex-1 p-2 rounded-lg text-[10px] font-bold bg-amber-500 text-white uppercase">Personalizada</button>
+                            <button onclick="setTrayType('pronta')" id="btn-type-pronta" class="flex-1 p-2 rounded-lg text-[10px] font-bold bg-white text-amber-500 border border-amber-500 uppercase">Sugestão Pronta</button>
+                        </div>
+                    </div>
+
+                    <div id="preset-selector" class="hidden space-y-2">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Marque os itens inclusos:</p>
+                        <div id="admin-preset-items" class="grid grid-cols-2 gap-2"></div>
+                    </div>
+
+                    <button onclick="addTray()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Salvar Bandeja</button>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4">
-                <h3 class="font-black text-[10px] uppercase text-amber-600">Petiscos</h3>
+                <h3 class="font-black text-[10px] uppercase text-amber-600 tracking-widest">Cardápio de Petiscos</h3>
                 <div id="admin-snack-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
                 <div class="pt-4 border-t space-y-2">
                     <input type="text" id="new-snack-name" placeholder="Nome" class="w-full p-3 bg-slate-50 rounded-xl">
-                    <input type="text" id="new-snack-img" placeholder="URL da Foto" class="w-full p-3 bg-slate-50 rounded-xl">
-                    <button onclick="addSnack()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Adicionar</button>
+                    <input type="text" id="new-snack-img" placeholder="Link da Foto" class="w-full p-3 bg-slate-50 rounded-xl">
+                    <button onclick="addSnack()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Adicionar Petisco</button>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 text-center">
+            <div class="bg-white p-6 rounded-3xl border shadow-sm text-center space-y-4">
                 <button onclick="fixStoreLocation()" class="bg-amber-100 text-amber-700 w-full py-3 rounded-xl font-black text-[10px] uppercase">Fixar GPS da Loja Aqui</button>
                 <div class="grid grid-cols-2 gap-2">
                     <input type="number" id="adm-per-km" placeholder="R$ por KM">
                     <input type="number" id="adm-min-tax" placeholder="Taxa Mínima">
                 </div>
-                <input type="text" id="adm-wa" placeholder="WhatsApp Loja">
-                <button onclick="saveAdminConfigs()" class="bg-green-600 text-white w-full py-4 rounded-xl font-black uppercase text-[10px]">Salvar Tudo</button>
+                <input type="text" id="adm-wa" placeholder="WhatsApp (DDD+Número)">
+                <button onclick="saveAdminConfigs()" class="bg-green-600 text-white w-full py-4 rounded-xl font-black uppercase text-[10px]">Salvar Configurações</button>
             </div>
         </section>
     </main>
 
-    <!-- MODAL -->
+    <!-- MODAL SELEÇÃO -->
     <div id="snack-modal" class="fixed inset-0 bg-slate-900/60 hidden z-[300] flex items-end justify-center p-6 backdrop-blur-xl">
         <div class="bg-white w-full max-w-md rounded-[50px] p-10 max-h-[85vh] overflow-y-auto shadow-2xl">
-            <h3 class="font-black text-2xl mb-8 text-center tracking-tighter italic text-slate-800">Selecione</h3>
+            <h3 class="font-black text-2xl mb-8 text-center text-slate-800 tracking-tighter italic">O que vai agora?</h3>
             <div class="grid grid-cols-2 gap-6" id="snack-list-container"></div>
             <button onclick="document.getElementById('snack-modal').classList.add('hidden')" class="w-full mt-10 text-slate-400 font-bold text-[10px] uppercase text-center tracking-widest">Fechar</button>
         </div>
@@ -209,55 +184,60 @@
             appId: "1:211799950005:web:836bb02c084bc906bdf4fc",
             measurementId: "G-BSCWSDE7TB"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         let trays = [], snacks = [], config = {}, selectedTray = null, currentConfig = [], deliveryFee = 0, clientCoords = null;
+        let currentAdminType = 'personalizada';
+        let logoClicks = 0;
+
+        // ACESSO SECRETO ADM
+        window.secretAdminAccess = () => {
+            logoClicks++;
+            if (logoClicks >= 3) {
+                logoClicks = 0;
+                toggleAdmin();
+            }
+            setTimeout(() => { logoClicks = 0; }, 2000);
+        };
 
         // BANCO DE DADOS
         onValue(ref(db, 'trays'), s => { trays = s.val() ? Object.keys(s.val()).map(k => ({id:k, ...s.val()[k]})) : []; renderClientTrays(); renderAdminTrays(); });
-        onValue(ref(db, 'snacks'), s => { snacks = s.val() ? Object.keys(s.val()).map(k => ({id:k, ...s.val()[k]})) : []; renderAdminSnacks(); });
-        onValue(ref(db, 'config'), s => { config = s.val() || {whatsapp:'', perKm:3, minTax:7}; 
+        onValue(ref(db, 'snacks'), s => { 
+            snacks = s.val() ? Object.keys(s.val()).map(k => ({id:k, ...s.val()[k]})) : []; 
+            renderAdminSnacks(); renderPresetCheckboxes();
+        });
+        onValue(ref(db, 'config'), s => { 
+            config = s.val() || {whatsapp:'', perKm:3, minTax:7}; 
             document.getElementById('adm-wa').value = config.whatsapp || '';
             document.getElementById('adm-per-km').value = config.perKm || 3;
             document.getElementById('adm-min-tax').value = config.minTax || 7;
         });
 
-        // --- RENDERIZAÇÃO DA BANDEJA DINÂMICA ---
+        // BANDEJA DINÂMICA
         window.renderTray = () => {
             const container = document.getElementById('tray-visual');
             container.innerHTML = '';
-            
             const numWedges = selectedTray.size - 1;
             const angleStep = 360 / numWedges;
 
-            // Criar Centro
             const center = document.createElement('div');
             center.className = 'slot-center';
-            center.id = 'slot-0';
-            center.onclick = () => openModal(0);
-            center.innerHTML = currentConfig[0] ? `<img src="${currentConfig[0].image}" class="snack-full-img" style="width:100%; height:100%; left:0">` : '<span class="plus-icon" style="color:#ddd">+</span>';
+            center.onclick = () => { if(!selectedTray.isPreset) openModal(0); };
+            center.innerHTML = currentConfig[0] ? `<img src="${currentConfig[0].image}" class="snack-full-img" style="width:100%;height:100%;left:0">` : '<span class="plus-icon" style="color:#ddd">+</span>';
             container.appendChild(center);
 
-            // Criar Fatias Laterais Dinâmicas
             for(let i = 1; i <= numWedges; i++) {
                 const wedge = document.createElement('div');
-                wedge.className = `slot-wedge`;
+                wedge.className = 'slot-wedge';
                 wedge.style.transform = `rotate(${(i-1) * angleStep - 90}deg)`;
-                
-                // Cálculo de Clip-path dinâmico para fechar o círculo
-                // Para 4 fatias, o ângulo é 90. Para 5 é 72, etc.
-                // Usamos uma lógica de polígono para simular o corte
-                const wedgeAngle = angleStep;
-                wedge.style.clipPath = `polygon(50% 50%, 100% ${50 - (wedgeAngle/2)}%, 100% ${50 + (wedgeAngle/2)}%)`;
-                wedge.style.scale = "1.5"; // Aumenta para garantir que se toquem no centro
-
-                wedge.onclick = () => openModal(i);
+                wedge.style.clipPath = `polygon(50% 50%, 100% ${50-(angleStep/2)}%, 100% ${50+(angleStep/2)}%)`;
+                wedge.style.scale = "1.5";
+                wedge.onclick = () => { if(!selectedTray.isPreset) openModal(i); };
                 
                 if(currentConfig[i]) {
-                    const imgRotation = -((i-1) * angleStep - 90);
-                    wedge.innerHTML = `<img src="${currentConfig[i].image}" class="snack-full-img" style="transform: rotate(${imgRotation}deg) scale(1.1)">`;
+                    const rot = -((i-1) * angleStep - 90);
+                    wedge.innerHTML = `<img src="${currentConfig[i].image}" class="snack-full-img" style="transform: rotate(${rot}deg) scale(1.1)">`;
                 } else {
                     wedge.innerHTML = `<span class="plus-icon">+</span>`;
                 }
@@ -265,45 +245,22 @@
             }
         };
 
-        // --- FLOW DO CLIENTE ---
+        // CLIENTE
         window.selectTray = (id) => {
             selectedTray = trays.find(t => t.id === id);
-            currentConfig = Array(selectedTray.size).fill(null);
+            if(selectedTray.isPreset) {
+                currentConfig = selectedTray.presetItems.map(snackId => snacks.find(s => s.id === snackId));
+                document.getElementById('preset-description').classList.remove('hidden');
+                document.getElementById('preset-description').innerText = "Acompanha: " + currentConfig.map(s => s.name).join(", ");
+            } else {
+                currentConfig = Array(selectedTray.size).fill(null);
+                document.getElementById('preset-description').classList.add('hidden');
+            }
             showSection('step-2');
             document.getElementById('tray-label-ui').innerText = selectedTray.label;
             document.getElementById('subtotal-price').innerText = `R$ ${selectedTray.price.toFixed(2)}`;
             renderTray();
         };
-
-        window.openModal = (i) => {
-            window.activeI = i;
-            const available = snacks.filter(s => s.available !== false);
-            document.getElementById('snack-list-container').innerHTML = available.map(s => `
-                <button onclick="pickSnack('${s.id}')" class="flex flex-col items-center">
-                    <div class="w-24 h-24 rounded-full overflow-hidden mb-2 shadow-xl border-4 border-white"><img src="${s.image}" class="w-full h-full object-cover"></div>
-                    <span class="text-[10px] font-black uppercase text-slate-500 text-center">${s.name}</span>
-                </button>
-            `).join('');
-            document.getElementById('snack-modal').classList.remove('hidden');
-        };
-
-        window.pickSnack = (id) => {
-            currentConfig[window.activeI] = snacks.find(s => s.id === id);
-            document.getElementById('snack-modal').classList.add('hidden');
-            renderTray();
-        };
-
-        window.goToCheckout = () => {
-            if(currentConfig.includes(null)) return alert("Preencha todos os espaços!");
-            showSection('step-3');
-            atualizarResumo();
-        };
-
-        function atualizarResumo() {
-            document.getElementById('resumo-subtotal').innerText = `R$ ${selectedTray.price.toFixed(2)}`;
-            document.getElementById('resumo-taxa').innerText = `R$ ${deliveryFee.toFixed(2)}`;
-            document.getElementById('resumo-total').innerText = `R$ ${(selectedTray.price + deliveryFee).toFixed(2)}`;
-        }
 
         window.getClientLocation = () => {
             navigator.geolocation.getCurrentPosition(p => {
@@ -315,78 +272,77 @@
                     const a = Math.sin(dLat/2)**2 + Math.cos(config.lat*Math.PI/180)*Math.cos(clientCoords.lat*Math.PI/180)*Math.sin(dLon/2)**2;
                     const dist = (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))) * 1.35;
                     deliveryFee = Math.max(config.minTax, dist * config.perKm);
-                    document.getElementById('dist-display').innerText = dist.toFixed(1);
+                    
+                    document.getElementById('btn-gps').innerHTML = `<i class="fas fa-check"></i> FRETE CALCULADO!`;
+                    document.getElementById('btn-gps').className = "w-full bg-green-100 text-green-700 p-4 rounded-2xl font-black text-xs uppercase";
+                    document.getElementById('resumo-financeiro').classList.remove('hidden');
+                    document.getElementById('btn-finalizar').disabled = false;
+                    document.getElementById('btn-finalizar').className = "w-full bg-green-600 text-white py-6 rounded-3xl font-black text-sm uppercase shadow-xl";
+                    document.getElementById('btn-finalizar').innerText = "PEDIR NO WHATSAPP";
                     atualizarResumo();
-                    alert("Frete Calculado!");
                 }
-            });
+            }, () => alert("Ative seu GPS para calcularmos a entrega."));
         };
 
         window.sendWhatsApp = () => {
             const n = document.getElementById('cust-name').value;
             const rua = document.getElementById('end-rua').value, num = document.getElementById('end-num').value, bairro = document.getElementById('end-bairro').value;
-            const pay = document.getElementById('cust-payment').value;
             if(!n || !rua || !num) return alert("Preencha os dados de entrega!");
 
-            const itens = currentConfig.map((s,i) => `• ${i===0?'CENTRO':'BORDA'}: *${s.name}*`).join('\n');
+            const itens = currentConfig.map((s,i) => `• ${i===0?'Centro':'Borda'}: *${s.name}*`).join('\n');
             const gps = clientCoords ? `https://www.google.com/maps?q=${clientCoords.lat},${clientCoords.lng}` : 'Não enviado';
-            const msg = `*NOVO PEDIDO - SNACKTRAY*\n👤 *Cliente:* ${n}\n📍 *End:* ${rua}, ${num} - ${bairro}\n🌎 *GPS:* ${gps}\n\n📦 *Bandeja:* ${selectedTray.label}\n${itens}\n\n💰 *VALOR TOTAL:* R$ ${(selectedTray.price + deliveryFee).toFixed(2)}\n💳 *PAGAMENTO:* ${pay}`;
+            const msg = `*NOVO PEDIDO - PETISCO PRIME* 🧺\n👤 *Cliente:* ${n}\n📍 *End:* ${rua}, ${num} - ${bairro}\n🌎 *GPS:* ${gps}\n\n📦 *Bandeja:* ${selectedTray.label}\n${itens}\n\n💰 *VALOR TOTAL:* R$ ${(selectedTray.price + deliveryFee).toFixed(2)}\n💳 *PAGAMENTO:* ${document.getElementById('cust-payment').value}`;
             window.open(`https://wa.me/${config.whatsapp}?text=${encodeURIComponent(msg)}`);
         };
 
-        // --- ADM ---
+        // ADM LOGIC
+        window.setTrayType = (type) => {
+            currentAdminType = type;
+            document.getElementById('btn-type-pers').className = type === 'personalizada' ? "flex-1 p-2 rounded-lg text-[10px] font-bold bg-amber-500 text-white uppercase" : "flex-1 p-2 rounded-lg text-[10px] font-bold bg-white text-amber-500 border border-amber-500 uppercase";
+            document.getElementById('btn-type-pronta').className = type === 'pronta' ? "flex-1 p-2 rounded-lg text-[10px] font-bold bg-amber-500 text-white uppercase" : "flex-1 p-2 rounded-lg text-[10px] font-bold bg-white text-amber-500 border border-amber-500 uppercase";
+            document.getElementById('preset-selector').classList.toggle('hidden', type === 'personalizada');
+        };
+
         window.addTray = () => {
-            const l = document.getElementById('new-tray-label').value, s = parseInt(document.getElementById('new-tray-size').value), p = parseFloat(document.getElementById('new-tray-price').value);
-            if(l && s) push(ref(db, 'trays'), {label:l, size:s, price:p});
+            const label = document.getElementById('new-tray-label').value;
+            const size = parseInt(document.getElementById('new-tray-size').value);
+            const price = parseFloat(document.getElementById('new-tray-price').value);
+            let presetItems = [];
+            if(currentAdminType === 'pronta') {
+                const checked = document.querySelectorAll('.preset-chk:checked');
+                presetItems = Array.from(checked).map(c => c.value);
+                if(presetItems.length !== size) return alert(`Selecione exatamente ${size} itens!`);
+            }
+            if(label && size) push(ref(db, 'trays'), { label, size, price, isPreset: currentAdminType === 'pronta', presetItems: presetItems });
         };
-        window.addSnack = () => {
-            const n = document.getElementById('new-snack-name').value, i = document.getElementById('new-snack-img').value;
-            if(n && i) push(ref(db, 'snacks'), {name:n, image:i, available:true});
+
+        // UTIL
+        window.openModal = (i) => {
+            window.activeI = i;
+            const available = snacks.filter(s => s.available !== false);
+            document.getElementById('snack-list-container').innerHTML = available.map(s => `
+                <button onclick="pickSnack('${s.id}')" class="flex flex-col items-center">
+                    <div class="w-20 h-20 rounded-full overflow-hidden mb-2 shadow-lg border-2 border-white"><img src="${s.image}" class="w-full h-full object-cover"></div>
+                    <span class="text-[9px] font-black uppercase text-center">${s.name}</span>
+                </button>
+            `).join('');
+            document.getElementById('snack-modal').classList.remove('hidden');
         };
+        window.pickSnack = (id) => { currentConfig[window.activeI] = snacks.find(s => s.id === id); document.getElementById('snack-modal').classList.add('hidden'); renderTray(); };
+        window.showSection = (id) => { ['step-1','step-2','step-3','admin-area'].forEach(s => document.getElementById(s).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); window.scrollTo(0,0); };
+        window.toggleAdmin = () => { if(document.getElementById('admin-area').classList.contains('hidden')) { if(prompt("Senha ADM:") === "1234") showSection('admin-area'); } else showSection('step-1'); };
+        window.goToCheckout = () => { if(currentConfig.includes(null)) return alert("Preencha todos os espaços!"); showSection('step-3'); };
+        window.addSnack = () => { const n = document.getElementById('new-snack-name').value, i = document.getElementById('new-snack-img').value; if(n && i) push(ref(db, 'snacks'), {name:n, image:i, available:true}); };
         window.deleteTray = (id) => remove(ref(db, `trays/${id}`));
         window.deleteSnack = (id) => remove(ref(db, `snacks/${id}`));
         window.toggleAvail = (id, cur) => update(ref(db, `snacks/${id}`), {available: !cur});
-        window.saveAdminConfigs = () => update(ref(db, 'config'), {
-            whatsapp: document.getElementById('adm-wa').value,
-            perKm: parseFloat(document.getElementById('adm-per-km').value),
-            minTax: parseFloat(document.getElementById('adm-min-tax').value)
-        });
+        window.saveAdminConfigs = () => update(ref(db, 'config'), { whatsapp: document.getElementById('adm-wa').value, perKm: parseFloat(document.getElementById('adm-per-km').value), minTax: parseFloat(document.getElementById('adm-min-tax').value) });
         window.fixStoreLocation = () => navigator.geolocation.getCurrentPosition(p => update(ref(db, 'config'), {lat:p.coords.latitude, lng:p.coords.longitude}));
-
-        window.showSection = (id) => {
-            ['step-1','step-2','step-3','admin-area'].forEach(s => document.getElementById(s).classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            window.scrollTo(0,0);
-        };
-        window.toggleAdmin = () => {
-            if(document.getElementById('admin-area').classList.contains('hidden')) {
-                if(prompt("Senha:") === "1234") showSection('admin-area');
-            } else showSection('step-1');
-        };
-
-        function renderClientTrays() {
-            document.getElementById('tray-list-client').innerHTML = trays.map(t => `
-                <button onclick="selectTray('${t.id}')" class="w-full bg-white p-12 rounded-[55px] flex justify-between items-center shadow-xl border border-white">
-                    <span class="font-black text-slate-900 uppercase text-xs">${t.label}</span>
-                    <span class="text-slate-400 font-bold">R$ ${t.price}</span>
-                </button>
-            `).join('');
-        }
-        function renderAdminTrays() {
-            document.getElementById('admin-tray-list').innerHTML = trays.map(t => `<div class="flex justify-between p-2 bg-slate-50 rounded-lg text-xs mb-1"><span>${t.label} (${t.size} furos)</span><button onclick="deleteTray('${t.id}')" class="text-red-500 font-bold">Remover</button></div>`).join('');
-        }
-        function renderAdminSnacks() {
-            document.getElementById('admin-snack-list').innerHTML = snacks.map(s => `
-                <div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg text-[10px] mb-1">
-                    <span>${s.name}</span>
-                    <div class="flex gap-2">
-                        <button onclick="toggleAvail('${s.id}', ${s.available !== false})" class="${s.available !== false ? 'text-green-600' : 'text-slate-400'} font-bold">● ${s.available !== false ? 'Ativo' : 'Esgotado'}</button>
-                        <button onclick="deleteSnack('${s.id}')" class="text-red-400">Excluir</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
+        function atualizarResumo() { document.getElementById('resumo-subtotal').innerText = `R$ ${selectedTray.price.toFixed(2)}`; document.getElementById('resumo-taxa').innerText = `R$ ${deliveryFee.toFixed(2)}`; document.getElementById('resumo-total').innerText = `R$ ${(selectedTray.price + deliveryFee).toFixed(2)}`; }
+        function renderClientTrays() { document.getElementById('tray-list-client').innerHTML = trays.map(t => `<button onclick="selectTray('${t.id}')" class="w-full bg-white p-8 rounded-[45px] shadow-xl border border-white text-left active:scale-95 transition-all"><div class="flex justify-between items-center"><span class="font-black text-slate-900 uppercase text-xs">${t.label}</span><span class="text-slate-400 font-bold text-xs">R$ ${t.price}</span></div><p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-widest">${t.isPreset ? 'Sugestão do Chef' : 'Monte do seu jeito'}</p></button>`).join(''); }
+        function renderAdminTrays() { document.getElementById('admin-tray-list').innerHTML = trays.map(t => `<div class="flex justify-between p-2 bg-slate-50 rounded-lg text-xs"><span>${t.label}</span><button onclick="deleteTray('${t.id}')" class="text-red-500 font-bold px-2">X</button></div>`).join(''); }
+        function renderAdminSnacks() { document.getElementById('admin-snack-list').innerHTML = snacks.map(s => `<div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg text-[10px]"><span>${s.name}</span><div class="flex gap-2"><button onclick="toggleAvail('${s.id}', ${s.available !== false})">${s.available !== false ? '✅' : '❌'}</button><button onclick="deleteSnack('${s.id}')">🗑️</button></div></div>`).join(''); }
+        function renderPresetCheckboxes() { document.getElementById('admin-preset-items').innerHTML = snacks.map(s => `<label class="flex items-center gap-2 p-2 bg-white rounded-lg text-[9px] font-bold uppercase"><input type="checkbox" value="${s.id}" class="preset-chk"> ${s.name}</label>`).join(''); }
     </script>
 </body>
 </html>
